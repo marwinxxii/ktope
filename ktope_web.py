@@ -40,13 +40,14 @@ class KtoPage:
         Нажимая на эту кнопку, вы соглашаетесь, что пользуетесь этим сервисом на свой страх и риск
         <img src="http://forum.kgn.ru/Smileys/default/trollface.png" /><br />
         исходный скрипт - marwinXXII, веб версия - Egor-kun<br />
-        <a href="http://rospil.info/donate">Donate</a>
+        <a href="https://github.com/marwinxxii/ktope-hw2/">Sources</a><br />
+        <a href="http://rospil.info/donate">Donate :)</a>
         </form>'''+self.footer
     index.exposed=True
 
     def result(self,data=None):
         if not data:
-            return self.header+'''Введите <a href="./">данные</a>'''+self.footer
+            return self.header+'''Введите <a href="/ktope">данные</a>'''+self.footer
         circuits=ktope_hw2.buildCircuits(data.split('\n'))
         elements=set()
         html='''<b>Исходные данные</b><br /><br />'''
