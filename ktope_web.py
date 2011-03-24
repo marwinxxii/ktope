@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import cherrypy
 import ktope_hw2
+import random
 
 class KtoPage:
     
@@ -23,6 +24,24 @@ class KtoPage:
     .white {
         background:#fff;
     }
+    .lime {
+        background:#3BFC01;
+    }
+    .pink {
+        background:#FB0079;
+    }
+    .blue {
+        background:#00FFD2;
+    }
+    .violet {
+        background:#6B0088;
+    }
+    .yellow {
+        background:#EDFC08;
+    }
+    .carrot {
+        background:#E98400;
+    }
     </style>
     </head>
 <body>'''
@@ -30,12 +49,15 @@ class KtoPage:
     footer='''
     </body>
 </html>'''
+    
+    funnyColors=['lime','pink','blue','violet','yellow','carrot']
 
     def index(self):
         return self.header+'''
         На каждой строке файла по одной цепи, в цепи через запятую - модули.
         <form action="/result" method="GET">
         <textarea rows="30" cols="80" name="data"></textarea><br />
+        Не скучные цвета <input type="checkbox" name="boring" /><br />
         <input type="submit" /><br />
         Нажимая на эту кнопку, вы соглашаетесь, что пользуетесь этим сервисом на свой страх и риск
         <img src="http://forum.kgn.ru/Smileys/default/trollface.png" /><br />
@@ -45,9 +67,14 @@ class KtoPage:
         </form>'''+self.footer
     index.exposed=True
 
-    def result(self,data=None):
+    def result(self,data=None,boring=None):
         if not data:
             return self.header+'''Введите <a href="/ktope">данные</a>'''+self.footer
+        print(boring)
+        if boring=='on':
+            boring=False
+        else:
+            boring=True
         circuits=ktope_hw2.buildCircuits(data.split('\n'))
         elements=set()
         html='''<b>Исходные данные</b><br /><br />'''
@@ -73,13 +100,17 @@ class KtoPage:
             html+='''<td width="%i%%"><b>%i</b></td>''' % (width,key)
         html+='</tr>'
         lgray=False
-        i=1
+        i=0
         for row in matrix1:
-            if lgray:
-                html+='<tr class="lightGray">'
+            if boring:
+                if lgray:
+                    html+='<tr class="lightGray">'
+                else:
+                    html+='<tr>'
+                html+='<td class="gray"><b>%i</b></td>' % elements[i]
             else:
-                html+='<tr>'
-            html+='<td class="gray"><b>%i</b></td>' % i
+                html+='''<tr class="%s">
+                <td class="%s"><b>%i</b></td>'''%(self.funnyColors[random.randint(0,len(self.funnyColors)-1)],self.funnyColors[random.randint(0,len(self.funnyColors)-1)], elements[i])
             for el in row:
                 if el==0:
                     html+='<td>%i</td>' % el
@@ -102,11 +133,15 @@ class KtoPage:
         i=0
         lgray=False
         for row in matrix2:
-            if lgray:
-                html+='<tr class="lightGray">'
+            if boring:
+                if lgray:
+                    html+='<tr class="lightGray">'
+                else:
+                    html+='<tr>'
+                html+='<td class="gray"><b>%i</b></td>' % elements[i]
             else:
-                html+='<tr>'
-            html+='<td class="gray"><b>%i</b></td>' % elements[i]
+                html+='''<tr class="%s">
+                <td class="%s"><b>%i</b></td>'''%(self.funnyColors[random.randint(0,len(self.funnyColors)-1)],self.funnyColors[random.randint(0,len(self.funnyColors)-1)],elements[i])
             k=0
             for val in row:
                 if k==i:
@@ -133,6 +168,9 @@ class KtoPage:
         colored=ktope_hw2.colorGraph(graph)
         for key in colored:
             html+='j=%i: %s<br />' % (key,str(colored[key]))
+        if not boring:
+            html+='''<br /><h1>Эти нескучные цвета как бы намекают, что не стоит всем сдавать
+            одинаковые отчёты</h1>'''
         return self.header+html+self.footer
     result.exposed=True
 
