@@ -1,4 +1,4 @@
-A script to solve KTOPE homework 2
+A couple of scripts for solving KTOPE homeworks
 Licensed under GPL
 
-ktope_web is based on Egor-kun script
+Cherrypy is used for web versions of scripts

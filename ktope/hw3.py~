@@ -1,0 +1,221 @@
+import ktope.hw2
+import math
+
+__name__='hw3'
+
+def buildGraph(matrix,elems,rows,cols):
+    if rows*cols<len(elems):
+        raise ValueError('Not enough positions for elements')
+    graph=[]
+    row=col=0
+    graph.append([])
+    # размещаем элементы на подложке
+    #coords={}
+    '''for i in elems:
+        graph[row].append(i)
+        #coords[i]=(row,col)
+        col=col+1
+        if col>=cols:
+            col=0
+            row=row+1
+            graph.append([])
+    coords=getCoords(graph)'''
+    ri=[]
+    for r in matrix:
+        sum=0
+        for i in r:
+            sum=sum+i
+        ri.append(sum)
+    # matrix of distances
+    d=[]
+    #i=0
+    d=buildDistMatrix(rows,cols)
+    '''for e in elems:
+        d.append([])
+        for k in elems:
+            if e==k:
+                d[i].append(0)
+                continue
+            x=coords[k][0]-coords[e][0]
+            if x<0:
+                x=-x
+            y=coords[k][1]-coords[e][1]
+            if y<0:
+                y=-y
+            d[i].append(x+y)
+        i=i+1'''
+    # sum of distances for each row
+    di=[]
+    for de in d:
+        sum=0
+        for i in de:
+            sum=sum+i
+        di.append(sum)
+    # sorting elements by not ascending of ri
+    els=[]
+    temp=list(ri)
+    for i in range(len(temp)):
+        max=temp[0]
+        ind=0
+        for r in temp:
+            if r>max:
+                max=r
+                ind=temp.index(r)
+        temp[ind]=0
+        els.append(elems[ind])
+    # sorting positions by not descending of di
+    ps=[]
+    temp=list(di)
+    for i in range(len(temp)):
+        min=100500
+        ind=0
+        for de in temp:
+            if not de is None and de<min:
+                min=de
+                ind=temp.index(de)
+        temp[ind]=None
+        ps.append(ind)
+    newgraph=[]
+    # reserving places at graph
+    for i in range(rows):
+        newgraph.append([])
+        for k in range(cols):
+            newgraph[i].append(0)
+    # setting elements to their places at graph
+    for p in range(len(els)):
+        i=int(ps[p]/cols);
+        k=ps[p]%cols;
+        newgraph[i][k]=els[p]
+    dm=buildNodeDistMatrix(elems,newgraph)
+    result={
+        'ri':ri,
+        'd':d,
+        'di':di,
+        'graph':newgraph,
+        'es':els,
+        'ps':ps,
+        'dm':dm
+        }
+    return result
+
+'''def F(matrix,coords):
+    f=0
+    for row in matrix:
+        for el in row:
+            for e in row[1:]:
+                f=f+el*(math.fabs(coords[el][0]-coords[e][0])+
+                        math.fabs(coords[el][1]-coords[e][1]))
+            f=f+el*coords[el]
+    return f'''
+
+def getCoords(graph):
+    r=0
+    coords={}
+    for row in graph:
+        c=0
+        for el in row:
+            coords[el]=(r,c)
+            c=c+1
+        r=r+1
+    return coords
+
+def orthogonalMetric(x1,y1,x2,y2):
+    x=x1-x2
+    if x<0:
+        x=-x
+    y=y1-y2
+    if y<0:
+        y=-y
+    return x+y
+
+def buildDistMatrix(rows,cols):
+    matrix=[]
+    size=rows*cols
+    for r in range(size):
+        matrix.append([])
+        for c in range(size):
+            if r==c:
+                matrix[r].append(0)
+                continue
+            matrix[r].append(orthogonalMetric(
+                int(r/cols),
+                r%cols,
+                int(c/cols),
+                c%cols))
+    return matrix
+
+def buildNodeDistMatrix(elems,graph):
+    matrix=[]
+    i=0
+    coords=getCoords(graph)
+    for el in elems:
+        matrix.append([])
+        for e in elems:
+            if el==e:
+                matrix[i].append(0)
+                continue
+            matrix[i].append(orthogonalMetric(
+                coords[el][0],
+                coords[el][1],
+                coords[e][0],
+                coords[e][1]))
+        i=i+1
+    return matrix
+
+def buildWeightMatrix(connMatrix,distMatrix):
+    if len(distMatrix)<len(connMatrix):
+        raise ValueError('Not enough positions for elements')
+    matrix=[]
+    count=len(connMatrix)
+    for i in range(count):
+        matrix.append([])
+        for k in range(count):
+            weight=connMatrix[i][k]*distMatrix[i][k]
+            if i!=k and weight==0:
+                matrix[i].append(-1)
+            else:
+                matrix[i].append(weight)
+    return matrix
+
+def buildPaths(node,elems,weightMatrix):
+    visited=[]
+    marks={}
+    matrix=[]
+    # initial state mark of start node=0, others-infinity
+    for el in elems:
+        if el==node:
+            marks[el]=0
+        else:
+            marks[el]=100500
+    val=0
+    k=0
+    while len(visited)!=len(elems):
+        minW=100500
+        key=node
+        matrix.append([])
+        # searching shortest path and filling matrix
+        for mark in marks:
+            if mark not in visited and marks[mark]<minW:
+                minW=marks[mark]
+                key=mark
+            matrix[k].append(marks[mark])
+        visited.append(key)
+        val=minW
+        # selecting neighbours
+        j=0
+        for i in elems:
+            weight=weightMatrix[key-1][i-1]
+            if i==key:
+                marks[i]=-1
+            elif weight!=-1 and val+weight<marks[i]:
+                marks[i]=weight+val
+            j=j+1
+        k=k+1
+    res=''
+    for i in range(len(matrix)):
+        for k in range(len(matrix)):
+            res+=str(matrix[k][i])+','
+        res+='\n'
+    print(res)
+    #print(matrix)
+    return matrix

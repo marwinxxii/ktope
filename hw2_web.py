@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#Copyright (C) 2011  Alexey Agapitov
+# Copyright (C) 2011  Alexey Agapitov
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -14,16 +14,17 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import cherrypy
-import ktope_hw2
+from ktope import hw2
 import random
 
-class KtoPage:
+class Hw2Page:
     
     header='''
-<html>
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Скачать КТОПЭ БЕсПЛАНО БЕЗ СМС БЕЗ РЕГиСТРАЦИИ!!1</title>
+    <title>КТОПЭ ДЗ №2</title>
     <style type="text/css">
     table {
         width:100%;
@@ -84,12 +85,11 @@ class KtoPage:
     def result(self,data=None,boring=None):
         if not data:
             return self.header+'''Введите <a href="/ktope">данные</a>'''+self.footer
-        print(boring)
         if boring=='on':
             boring=False
         else:
             boring=True
-        circuits=ktope_hw2.buildCircuits(data.split('\n'))
+        circuits=hw2.buildCircuits(data.split('\n'))
         elements=set()
         html='''<b>Исходные данные</b><br /><br />'''
         for i in range(1,len(circuits)+1):
@@ -102,68 +102,72 @@ class KtoPage:
                 elements.add(el)
         elements=list(elements)
         elements.sort()
-        matrix1=ktope_hw2.buildComplexMatrix(circuits,elements)
+        matrix1=hw2.buildComplexMatrix(circuits,elements)
         width=int(100/(len(circuits)+1))
         html+='''<br />
         <b>Матрица комплексов</b><br /><br />
         <table cellspacing="0">
         <tr class="gray">
-            <td width="%i%%" class="white"></td>
+            <td width="%i%%" class="white">&nbsp;</td>
             ''' % width
         for key in circuits:
-            html+='''<td width="%i%%"><b>%i</b></td>''' % (width,key)
-        html+='</tr>'
+            html+='<td width="%i%%"><b>%i</b></td>\n' % (width,key)
+        html+='</tr>\n'
         lgray=False
         i=0
         for row in matrix1:
             if boring:
                 if lgray:
-                    html+='<tr class="lightGray">'
+                    html+='<tr class="lightGray">\n'
                 else:
-                    html+='<tr>'
-                html+='<td class="gray"><b>%i</b></td>' % elements[i]
+                    html+='<tr>\n'
+                html+='<td class="gray"><b>%i</b></td>\n' % elements[i]
             else:
                 html+='''<tr class="%s">
-                <td class="%s"><b>%i</b></td>'''%(self.funnyColors[random.randint(0,len(self.funnyColors)-1)],self.funnyColors[random.randint(0,len(self.funnyColors)-1)], elements[i])
+                <td class="%s"><b>%i</b></td>\n'''%(
+                 self.funnyColors[random.randint(0,len(self.funnyColors)-1)],
+                 self.funnyColors[random.randint(0,len(self.funnyColors)-1)], elements[i])
             for el in row:
                 if el==0:
-                    html+='<td>%i</td>' % el
+                    html+='<td>%i</td>\n' % el
                 else:
-                    html+='<td><b>%i</b></td>' % el
-            html+='</tr>'
+                    html+='<td><b>%i</b></td>\n' % el
+            html+='</tr>\n'
             i+=1
             lgray=not lgray
         width=int(100/(len(elements)+1))
-        matrix2=ktope_hw2.buildConnMatrix(circuits,elements)
+        matrix2=hw2.buildConnMatrix(circuits,elements)
         html+='''</table><br />
         <b>Матрица соединений</b><br /><br />
         <table cellspacing="0">
         <tr class="gray">
-        <td width="%i%%" class="white">
+        <td width="%i%%" class="white">&nbsp;</td>
         ''' % width
         for el in elements:
-            html+='<td width="%i%%"><b>%i</b></td>' % (width,el)
-        html+='</tr>'
+            html+='<td width="%i%%"><b>%i</b></td>\n' % (width,el)
+        html+='</tr>\n'
         i=0
         lgray=False
         for row in matrix2:
             if boring:
                 if lgray:
-                    html+='<tr class="lightGray">'
+                    html+='<tr class="lightGray">\n'
                 else:
-                    html+='<tr>'
-                html+='<td class="gray"><b>%i</b></td>' % elements[i]
+                    html+='<tr>\n'
+                html+='<td class="gray"><b>%i</b></td>\n' % elements[i]
             else:
                 html+='''<tr class="%s">
-                <td class="%s"><b>%i</b></td>'''%(self.funnyColors[random.randint(0,len(self.funnyColors)-1)],self.funnyColors[random.randint(0,len(self.funnyColors)-1)],elements[i])
+                <td class="%s"><b>%i</b></td>\n''' %(
+                 self.funnyColors[random.randint(0,len(self.funnyColors)-1)],
+                 self.funnyColors[random.randint(0,len(self.funnyColors)-1)],elements[i])
             k=0
             for val in row:
                 if k==i:
-                    html+='<td><b>%i</b></td>' % val
+                    html+='<td><b>%i</b></td>\n' % val
                 else:
-                    html+='<td>%i</td>' % val
+                    html+='<td>%i</td>\n' % val
                 k+=1
-            html+='</tr>'
+            html+='</tr>\n'
             i+=1
             lgray=not lgray
         html+='''</table><br /><br />
@@ -172,19 +176,21 @@ class KtoPage:
         <tr class="gray">
         <td width="%i%%">Вершина</td>''' % width
         for el in elements:
-            html+='<td width="%i%%"><b>%i</b></td>' % (width,el)
+            html+='<td width="%i%%"><b>%i</b></td>\n' % (width,el)
         html+='''</tr>
-        <tr><td class="gray">Кол-во смежных</td>'''
-        graph=ktope_hw2.buildGraph(matrix2,elements)
+        <tr><td class="gray">Кол-во смежных</td>
+        '''
+        graph=hw2.buildGraph(matrix2,elements)
         for key in graph:
-            html+='<td>%i</td>' % len(graph[key])
-        html+='</tr></table><br /><br />'
-        colored=ktope_hw2.colorGraph(graph)
+            html+='<td>%i</td>\n' % len(graph[key])
+        html+='</tr></table>\n<br /><br />'
+        colored=hw2.colorGraph(graph)
         for key in colored:
-            html+='j=%i: %s<br />' % (key,str(colored[key]))
+            html+='j=%i: %s\n<br />' % (key,str(colored[key]))
         if not boring:
             html+='''<br /><h1>Эти нескучные цвета как бы намекают, что не стоит всем сдавать
-            одинаковые отчёты</h1>'''
+            одинаковые отчёты</h1>
+            '''
         return self.header+html+self.footer
     result.exposed=True
 
@@ -195,6 +201,6 @@ class KtoPage:
 import os.path
 tutconf = os.path.join(os.path.dirname(__file__), 'tutorial.conf')
 if __name__ == '__main__':
-    cherrypy.quickstart(KtoPage(), config=tutconf)
+    cherrypy.quickstart(Hw2Page(), config=tutconf)
 else:
-    cherrypy.tree.mount(KtoPage(), config=tutconf)
+    cherrypy.tree.mount(Hw2Page(), config=tutconf)
