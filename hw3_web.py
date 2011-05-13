@@ -257,7 +257,8 @@ class Hw3Page:
         <br/><br/>
         <b>Алгоритм Дейкстры</b><br/><br/>
         Исходная вершина: l<sub>%i</sub>
-        <br/><br/>''' % result['graph'][0][0] # choosing left-upper node
+        <br/><br/>''' % result['graph'][0][0]
+        # choosing left-upper node
         pathMatrix=hw3.buildPathMatrix(result['graph'][0][0],elements,weightMatrix)
         lGray=False
         html+='''
