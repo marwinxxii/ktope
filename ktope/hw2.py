@@ -1,6 +1,7 @@
 # Copyright (C) 2011  Alexey Agapitov
+#    This file is part of Ktope
 #
-#    This program is free software: you can redistribute it and/or modify
+#    Ktope is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
@@ -16,6 +17,17 @@
 import collections
 
 __name__='hw2'
+
+def getElements(circuits):
+    """Returns list of elements from circuits"""
+
+    elements=set()
+    for c in circuits:
+        for el in circuits[c]:
+            elements.add(el)
+    elements=list(elements)
+    elements.sort()
+    return elements
 
 def buildCircuits(lines):
     """Iterate over lines and build dict of circuits"""

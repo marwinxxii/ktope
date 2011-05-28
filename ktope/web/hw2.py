@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2011  Alexey Agapitov
+#    This file is part of Ktope.
 #
-#    This program is free software: you can redistribute it and/or modify
+#    Ktope is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
@@ -13,7 +14,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import cherrypy
+
 from ktope import hw2
 import random
 
@@ -70,21 +71,20 @@ class Hw2Page:
     def index(self):
         return self.header+'''
         На каждой строке файла по одной цепи, в цепи через запятую - модули.
-        <form action="/result" method="GET">
+        <form action="/hw2/result" method="GET">
         <textarea rows="30" cols="80" name="data"></textarea><br />
         Не скучные цвета <input type="checkbox" name="boring" /><br />
         <input type="submit" /><br />
         Нажимая на эту кнопку, вы соглашаетесь, что пользуетесь этим сервисом на свой страх и риск
         <img src="http://forum.kgn.ru/Smileys/default/trollface.png" /><br />
         исходный скрипт - marwinXXII, веб версия - Egor-kun<br />
-        <a href="https://github.com/marwinxxii/ktope-hw2/">Sources</a><br />
-        <a href="http://rospil.info/donate">Donate :)</a>
+        <a href="https://github.com/marwinxxii/ktope/">Sources</a><br />
         </form>'''+self.footer
     index.exposed=True
 
     def result(self,data=None,boring=None):
         if not data:
-            return self.header+'''Введите <a href="/ktope">данные</a>'''+self.footer
+            return self.header+'''Введите <a href="/hw2">данные</a>'''+self.footer
         if boring=='on':
             boring=False
         else:
@@ -193,14 +193,3 @@ class Hw2Page:
             '''
         return self.header+html+self.footer
     result.exposed=True
-
-    def ktope(self):
-        return self.index()
-    ktope.exposed=True
-
-import os.path
-tutconf = os.path.join(os.path.dirname(__file__), 'tutorial.conf')
-if __name__ == '__main__':
-    cherrypy.quickstart(Hw2Page(), config=tutconf)
-else:
-    cherrypy.tree.mount(Hw2Page(), config=tutconf)

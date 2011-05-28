@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2011  Alexey Agapitov
+#    This file is part of Ktope.
 #
-#    This program is free software: you can redistribute it and/or modify
+#    Ktope is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
@@ -13,7 +14,6 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import cherrypy
 from ktope import hw2,hw3
 import random
 
@@ -39,24 +39,6 @@ class Hw3Page:
     .white {
         background:#fff;
     }
-    .lime {
-        background:#3BFC01;
-    }
-    .pink {
-        background:#FB0079;
-    }
-    .blue {
-        background:#00FFD2;
-    }
-    .violet {
-        background:#6B0088;
-    }
-    .yellow {
-        background:#EDFC08;
-    }
-    .carrot {
-        background:#E98400;
-    }
     </style>
     </head>
 <body>'''
@@ -68,7 +50,7 @@ class Hw3Page:
     def index(self):
         return self.header+'''
         На каждой строке файла по одной цепи, в цепи через запятую - модули.
-        <form action="/result" method="GET">
+        <form action="/hw3/result" method="GET">
         <textarea rows="30" cols="80" name="data"></textarea><br />
         Количество строк: <input type="text" name="rows" maxlength="2" />
         Столбцов: <input type="text" name="cols" maxlength="2" /><br/>
@@ -76,14 +58,13 @@ class Hw3Page:
         Нажимая на эту кнопку, вы соглашаетесь, что пользуетесь этим сервисом на свой страх и риск
         <img src="http://forum.kgn.ru/Smileys/default/trollface.png" /><br />
         исходный скрипт - marwinXXII, веб версия - Egor-kun<br />
-        <a href="https://github.com/marwinxxii/ktope-hw2/">Sources</a><br />
-        <a href="http://rospil.info/donate">Donate :)</a>
+        <a href="https://github.com/marwinxxii/ktope">Sources</a><br />
         </form>'''+self.footer
     index.exposed=True
 
     def result(self,data=None,rows=None,cols=None):
         if not data or not rows or not cols:
-            return self.header+'''Введите <a href="/ktope">данные</a>'''+self.footer
+            return self.header+'''Введите <a href="/hw3">данные</a>'''+self.footer
         try:
             rows=int(rows)
             cols=int(cols)
@@ -288,14 +269,3 @@ class Hw3Page:
         html+='''</table>\n'''
         return self.header+html+self.footer
     result.exposed=True
-
-    def ktope(self):
-        return self.index()
-    ktope.exposed=True
-
-import os.path
-tutconf = os.path.join(os.path.dirname(__file__), 'tutorial.conf')
-if __name__ == '__main__':
-    cherrypy.quickstart(Hw3Page(), config=tutconf)
-else:
-    cherrypy.tree.mount(Hw3Page(), config=tutconf)

@@ -1,16 +1,16 @@
 # Copyright (C) 2011  Alexey Agapitov
 #
 #    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
+#    it under the terms of the GNU Affero General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
 #    This program is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+#    GNU Affero General Public License for more details.
 #
-#    You should have received a copy of the GNU General Public License
+#    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import math
@@ -174,7 +174,7 @@ def buildPathMatrix(node,elems,weightMatrix):
     visited=[]
     marks={}
     matrix=[]
-    # initial state mark of start node=0, others-infinity
+    # initial state. mark of start node=0, others-infinity
     for el in elems:
         if el==node:
             marks[el]=0
@@ -187,22 +187,28 @@ def buildPathMatrix(node,elems,weightMatrix):
         key=node
         matrix.append([])
         # searching shortest path and filling matrix
-        for mark in marks:
+        '''for mark in marks:
             if mark not in visited and marks[mark]<minW:
                 minW=marks[mark]
                 key=mark
-            matrix[k].append(marks[mark])
+            matrix[k].append(marks[mark])'''
+        for el in elems:
+            if el not in visited and marks[el]<minW:
+                minW=marks[el]
+                key=el
+            matrix[k].append(marks[el])
         visited.append(key)
         val=minW
         # selecting neighbours
-        j=0
+        #j=0
         ind=elems.index(key)
         for i in elems:
+            j=elems.index(i)
             weight=weightMatrix[ind][j]
             if i==key:
-                marks[i]=-1 # node was already marked with constant
-            elif weight!=-1 and val+weight<marks[i]:
+                marks[i]=-1 # node was already marked as constant
+            elif i not in visited and weight!=-1 and val+weight<marks[i]:
                 marks[i]=weight+val
-            j=j+1
+            #j=j+1
         k=k+1
     return matrix
